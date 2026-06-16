@@ -1,7 +1,7 @@
 # KHIZEX
 
 > The Future of Intelligent Ecosystems 🚀
-> 
+> Preview here : ([khizex.pythonanywhere.com](https://khizex.pythonanywhere.com/))
 > **Author:** MUSTAFA ([@KhizarDoingProgramming](https://github.com/KhizarDoingProgramming))
 
 [![Python](https://img.shields.io/badge/python-3.11+-blue?style=for-the-badge&logo=python)](https://python.org)
