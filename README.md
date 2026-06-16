@@ -6,6 +6,7 @@
 
 [![Python](https://img.shields.io/badge/python-3.14+-blue?style=for-the-badge&logo=python)](https://python.org)
 [![Django](https://img.shields.io/badge/django-6.0+-green?style=for-the-badge&logo=django)](https://djangoproject.com)
+[![PythonAnywhere](https://img.shields.io/badge/host-pythonanywhere-323232?style=for-the-badge)](https://pythonanywhere.com)
 [![License](https://img.shields.io/badge/license-MIT-purple?style=for-the-badge)]()
 
 ---
@@ -58,8 +59,8 @@ cd KHIZEX
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 
-# Install deps
-pip install django pillow gunicorn
+# Install deps (all included)
+pip install -r requirements.txt
 
 # Run migrations
 python manage.py migrate
@@ -108,7 +109,67 @@ KHIZEX/
 
 ## Deployment (For the Big Leagues) 🌐
 
-### Render + Supabase
+### Option 1: PythonAnywhere + Supabase (Free tier)
+
+**Step 1:** Prepare the code
+- The code is already on GitHub ready to clone
+
+**Step 2:** Set up PythonAnywhere
+1. Sign up at https://pythonanywhere.com
+2. Go to "Web" tab → "Add a new web app"
+3. Choose "Manual configuration" → Python 3.11+
+4. Clone your repo:
+   ```bash
+   git clone https://github.com/KhizarDoingProgramming/KHIZEX.git
+   ```
+5. Create virtual environment:
+   ```bash
+   cd KHIZEX
+   python -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
+
+**Step 3:** Configure WSGI
+Edit the WSGI file (in PythonAnywhere Web tab) to:
+```python
+import os
+import sys
+path = '/home/YOUR_USERNAME/KHIZEX'
+if path not in sys.path:
+    sys.path.append(path)
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'khizex.settings')
+from django.core.wsgi import get_wsgi_application
+application = get_wsgi_application()
+```
+
+**Step 4:** Connect Supabase
+1. Create Supabase project at https://supabase.com
+2. Go to Settings → Database → copy "Connection string"
+3. In PythonAnywhere Web tab → "Environment variables", add:
+   ```
+   DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@db.supabase.co:5432/postgres
+   SECRET_KEY=your-random-secret-key-here
+   DEBUG=False
+   ALLOWED_HOSTS=YOUR_USERNAME.pythonanywhere.com
+   ```
+
+**Step 5:** Static & Media files
+- In Web tab → Static files:
+  - URL: `/static/` → Directory: `/home/YOUR_USERNAME/KHIZEX/staticfiles`
+  - URL: `/media/` → Directory: `/home/YOUR_USERNAME/KHIZEX/media`
+
+**Step 6:** Migrate database
+```bash
+python manage.py migrate
+python manage.py collectstatic
+```
+
+**Step 7:** Reload the web app on PythonAnywhere
+
+---
+
+### Option 2: Render + Supabase (Recommended for production)
 
 **Option A: SQLite (quick deploy)**
 1. Create a Web Service on Render
