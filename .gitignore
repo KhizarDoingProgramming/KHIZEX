@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+*.egg-info/
+.eggs/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Static files
+/staticfiles/
+/static/
+
+# Secrets
+SECRET_KEY
+*.pem
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

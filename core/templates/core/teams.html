@@ -1,0 +1,174 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Teams - KHIZEX{% endblock %}
+
+{% block extra_css %}
+.page-header {
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.teams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 0 2rem 2rem 2rem;
+}
+
+.team-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.team-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.team-name {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.member-count {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.team-members {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin: 0.5rem 0;
+}
+
+.team-members .avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+}
+
+.directory-section {
+    padding: 0 2rem 2rem 2rem;
+}
+
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.user-table th, .user-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.user-table th {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.user-table tr:hover {
+    background: rgba(255,255,255,0.01);
+}
+
+.role-badge {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.role-admin { background: rgba(255, 0, 85, 0.1); color: #ff0055; }
+.role-dev { background: rgba(0, 240, 255, 0.1); color: var(--accent-blue); }
+.role-design { background: rgba(188, 0, 255, 0.1); color: var(--accent-purple); }
+.role-member { background: rgba(255, 255, 255, 0.05); color: var(--text-secondary); }
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 style="font-family: var(--font-heading); font-size: 2rem;">Teams</h1>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">manage team structures and collaborate.</p>
+    </div>
+    <a href="{% url 'team_create' %}" style="background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple)); color: #fff; text-decoration: none; padding: 0.8rem 1.5rem; border-radius: 6px; font-weight: 600;">+ Create Team</a>
+</div>
+
+<!-- Teams Grid -->
+<div class="teams-grid">
+    {% for team in teams %}
+    <div class="card team-card">
+        <div class="team-header">
+            <div class="team-name">{{ team.name }}</div>
+            <span class="member-count">{{ team.members.count }} Member{{ team.members.count|pluralize }}</span>
+        </div>
+        <div class="team-members">
+            {% for member in team.members.all|slice:":5" %}
+            <div class="avatar" style="background: {% if forloop.counter == 1 %}var(--accent-blue){% elif forloop.counter == 2 %}#ff0055{% elif forloop.counter == 3 %}#bc00ff{% elif forloop.counter == 4 %}#00ff87{% else %}#ffaa00{% endif %};">{{ member.username|truncatechars:1 }}</div>
+            {% endfor %}
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-secondary); border-top: 1px solid var(--border-color); padding-top: 1rem;">
+            <span><i class="fa-solid fa-cube"></i> {{ team.projects.count }} Project{{ team.projects.count|pluralize }}</span>
+            <span><i class="fa-solid fa-clock"></i> {{ team.created_at|timesince }} ago</span>
+        </div>
+    </div>
+    {% empty %}
+    <div style="grid-column: 1 / -1; text-align: center; padding: 4rem; color: var(--text-secondary);">
+        <i class="fa-solid fa-users" style="font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.3;"></i>
+        <h3 style="font-family: var(--font-heading); margin-bottom: 0.5rem;">No teams yet</h3>
+        <p>create a team to start collaborating.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Global Directory -->
+<div class="directory-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2 style="font-family: var(--font-heading); font-size: 1.5rem;">All Members</h2>
+    </div>
+
+    <table class="user-table">
+        <thead>
+            <tr>
+                <th>Member</th>
+                <th>Status</th>
+                <th>Joined</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in all_users %}
+            <tr>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 0.8rem;">
+                        <div class="avatar" style="width: 36px; height: 36px; background: {% cycle 'var(--accent-blue)' '#ff0055' '#bc00ff' '#00ff87' '#ffaa00' %};">{{ u.username|truncatechars:1 }}</div>
+                        <div>
+                            <div style="font-weight: 600;">{{ u.get_full_name|default:u.username }}</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">{{ u.email|default:"no email" }}</div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    {% if u == request.user %}
+                    <span style="color: var(--accent-green);"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> You</span>
+                    {% else %}
+                    <span style="color: var(--text-secondary);"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> Member</span>
+                    {% endif %}
+                </td>
+                <td style="color: var(--text-secondary); font-size: 0.85rem;">{{ u.date_joined|timesince }} ago</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

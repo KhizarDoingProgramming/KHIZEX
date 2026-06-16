@@ -1,0 +1,285 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ project.name }} - KHIZEX{% endblock %}
+
+{% block extra_css %}
+.page-header {
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.kanban-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    padding: 0 2rem 2rem 2rem;
+    min-height: 500px;
+}
+
+.kanban-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.kanban-header {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.task-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.2s;
+}
+
+.task-card:hover {
+    border-color: rgba(0, 240, 255, 0.15);
+}
+
+.task-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+}
+
+.task-desc {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin-bottom: 0.8rem;
+}
+
+.task-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.task-toggle {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 0.75rem;
+    transition: all 0.2s;
+}
+
+.task-toggle:hover {
+    background: rgba(0, 240, 255, 0.05);
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+}
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal {
+    background: #07070c;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 500px;
+}
+
+.modal h3 {
+    font-family: var(--font-heading);
+    margin-bottom: 1.5rem;
+}
+
+.form-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    margin-bottom: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-input:focus {
+    border-color: var(--accent-blue);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+.btn-cancel {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.btn-submit {
+    background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple));
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: inherit;
+}
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 style="font-family: var(--font-heading); font-size: 2rem;">{{ project.name }}</h1>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">{{ project.description|default:"No description" }}</p>
+    </div>
+    <div style="display: flex; gap: 1rem; align-items: center;">
+        <span style="color: var(--text-secondary); font-size: 0.85rem;">by {{ project.owner.username }}</span>
+        <button onclick="openModal()" style="background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple)); color: #fff; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer;">+ Add Task</button>
+    </div>
+</div>
+
+<!-- Kanban Board -->
+<div class="kanban-grid">
+    <!-- Todo Column -->
+    <div>
+        <div class="kanban-header" style="background: rgba(255,255,255,0.03);">
+            <span>To Do</span>
+            <span style="font-size: 0.8rem; color: var(--text-secondary);">{{ todo_tasks|length }}</span>
+        </div>
+        <div class="kanban-column" style="margin-top: 0.8rem;">
+            {% for task in todo_tasks %}
+            <div class="task-card">
+                <div class="task-title">{{ task.title }}</div>
+                {% if task.description %}
+                <div class="task-desc">{{ task.description|truncatewords:15 }}</div>
+                {% endif %}
+                <div class="task-meta">
+                    <span>{% if task.assignee %}{{ task.assignee.username }}{% else %}unassigned{% endif %}</span>
+                    <a href="{% url 'task_toggle' project.pk task.pk %}" class="task-toggle">Start &rarr;</a>
+                </div>
+            </div>
+            {% empty %}
+            <div style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.85rem;">
+                no tasks. add one!
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- In Progress Column -->
+    <div>
+        <div class="kanban-header" style="background: rgba(0, 240, 255, 0.05); color: var(--accent-blue);">
+            <span>In Progress</span>
+            <span style="font-size: 0.8rem;">{{ in_progress_tasks|length }}</span>
+        </div>
+        <div class="kanban-column" style="margin-top: 0.8rem;">
+            {% for task in in_progress_tasks %}
+            <div class="task-card" style="border-color: rgba(0, 240, 255, 0.1);">
+                <div class="task-title">{{ task.title }}</div>
+                {% if task.description %}
+                <div class="task-desc">{{ task.description|truncatewords:15 }}</div>
+                {% endif %}
+                <div class="task-meta">
+                    <span>{% if task.assignee %}{{ task.assignee.username }}{% else %}unassigned{% endif %}</span>
+                    <a href="{% url 'task_toggle' project.pk task.pk %}" class="task-toggle">Complete &rarr;</a>
+                </div>
+            </div>
+            {% empty %}
+            <div style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.85rem;">
+                nothing in progress
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Done Column -->
+    <div>
+        <div class="kanban-header" style="background: rgba(0, 255, 135, 0.05); color: var(--accent-green);">
+            <span>Done</span>
+            <span style="font-size: 0.8rem;">{{ done_tasks|length }}</span>
+        </div>
+        <div class="kanban-column" style="margin-top: 0.8rem;">
+            {% for task in done_tasks %}
+            <div class="task-card" style="opacity: 0.7; border-color: rgba(0, 255, 135, 0.1);">
+                <div class="task-title" style="text-decoration: line-through;">{{ task.title }}</div>
+                <div class="task-meta">
+                    <span>{% if task.assignee %}{{ task.assignee.username }}{% endif %}</span>
+                    <a href="{% url 'task_toggle' project.pk task.pk %}" class="task-toggle">Reopen</a>
+                </div>
+            </div>
+            {% empty %}
+            <div style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.85rem;">
+                no completed tasks yet
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Add Task Modal -->
+<div class="modal-overlay" id="taskModal">
+    <div class="modal">
+        <h3><i class="fa-solid fa-plus" style="color: var(--accent-blue);"></i> New Task</h3>
+        <form method="post" action="{% url 'task_create' project.pk %}">
+            {% csrf_token %}
+            <input type="text" name="title" class="form-input" placeholder="task title" required>
+            <textarea name="description" class="form-input" placeholder="description (optional)" rows="3"></textarea>
+            <select name="status" class="form-input">
+                <option value="todo">To Do</option>
+                <option value="in_progress">In Progress</option>
+            </select>
+            <div class="form-actions">
+                <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn-submit">Create Task</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openModal() {
+    document.getElementById('taskModal').classList.add('active');
+}
+function closeModal() {
+    document.getElementById('taskModal').classList.remove('active');
+}
+document.getElementById('taskModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'core/base.html' %}
+{% load humanize %}
+
+{% block title %}Notifications - KHIZEX{% endblock %}
+
+{% block extra_css %}
+.page-header {
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notifications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0 2rem 2rem 2rem;
+    max-width: 800px;
+}
+
+.notification-item {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+}
+
+.notification-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.notification-desc {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-top: 0.2rem;
+}
+
+.notification-time {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.unread-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent-blue);
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.mark-read-btn {
+    background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple));
+    color: #fff;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+}
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 style="font-family: var(--font-heading); font-size: 2rem;">Notifications</h1>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            {% if unread_count > 0 %}{{ unread_count }} unread notification{{ unread_count|pluralize }}{% else %}all caught up!{% endif %}
+        </p>
+    </div>
+    {% if unread_count > 0 %}
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="mark-read-btn">Mark All Read</button>
+    </form>
+    {% endif %}
+</div>
+
+<div class="notifications-list">
+    {% for notif in notifications_list %}
+    <div class="card notification-item" style="{% if not notif.is_read %}border-color: rgba(0, 240, 255, 0.15);{% endif %}">
+        {% if not notif.is_read %}
+        <div class="unread-dot"></div>
+        {% endif %}
+        <div class="notification-icon" style="background: {% if 'update' in notif.message.lower %}rgba(0, 240, 255, 0.1); color: var(--accent-blue){% elif 'alert' in notif.message.lower or 'security' in notif.message.lower %}rgba(255, 0, 85, 0.1); color: #ff0055{% elif 'deploy' in notif.message.lower or 'success' in notif.message.lower %}rgba(0, 255, 135, 0.1); color: var(--accent-green){% else %}rgba(188, 0, 255, 0.1); color: var(--accent-purple){% endif %};">
+            <i class="fa-solid {% if 'update' in notif.message.lower %}fa-bell{% elif 'alert' in notif.message.lower or 'security' in notif.message.lower %}fa-triangle-exclamation{% elif 'deploy' in notif.message.lower %}fa-circle-check{% elif 'comment' in notif.message.lower %}fa-comment{% elif 'like' in notif.message.lower %}fa-heart{% elif 'assign' in notif.message.lower %}fa-user-plus{% else %}fa-bell{% endif %}"></i>
+        </div>
+        <div class="notification-content">
+            <div class="notification-title">{{ notif.message }}</div>
+            <div class="notification-desc">{{ notif.created_at|timesince }} ago</div>
+        </div>
+        {% if not notif.is_read %}
+        <a href="{% url 'mark_notification_read' notif.id %}" style="color: var(--accent-blue); text-decoration: none; font-size: 0.8rem;">Mark read</a>
+        {% endif %}
+    </div>
+    {% empty %}
+    <div style="text-align: center; padding: 4rem; color: var(--text-secondary);">
+        <i class="fa-solid fa-bell-slash" style="font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.3;"></i>
+        <h3 style="font-family: var(--font-heading); margin-bottom: 0.5rem;">No notifications</h3>
+        <p>you're all caught up!</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

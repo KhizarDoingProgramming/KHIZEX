@@ -1,0 +1,193 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Profile - KHIZEX{% endblock %}
+
+{% block extra_css %}
+.page-header {
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 1.5rem;
+    padding: 0 2rem 2rem 2rem;
+}
+
+.profile-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    padding: 2rem;
+}
+
+.profile-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.profile-stats {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+    margin-top: 1rem;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-value {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.badge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 1rem;
+    width: 100%;
+}
+
+.badge-item {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    color: var(--accent-blue);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.badge-item:hover {
+    background: rgba(0, 240, 255, 0.05);
+    border-color: var(--accent-blue);
+}
+
+.edit-profile-btn {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-block;
+}
+
+.edit-profile-btn:hover {
+    background: rgba(0, 240, 255, 0.05);
+    border-color: var(--accent-blue);
+}
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 style="font-family: var(--font-heading); font-size: 2rem;">Profile</h1>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">your identity across the network.</p>
+    </div>
+    {% if profile_user == request.user %}
+    <a href="{% url 'profile_settings' %}" class="edit-profile-btn">Edit Profile</a>
+    {% endif %}
+</div>
+
+<div class="profile-layout">
+    <!-- Left Sidebar: Profile Info -->
+    <div class="card profile-card">
+        <div class="profile-avatar">{{ profile_user.username|truncatechars:1 }}</div>
+        <div>
+            <div style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700;">{{ profile_user.get_full_name|default:profile_user.username }}</div>
+            <div style="color: var(--text-secondary); font-size: 0.9rem;">@{{ profile_user.username }}</div>
+        </div>
+        {% if profile_obj.bio %}
+        <p style="color: var(--text-secondary); font-size: 0.85rem;">{{ profile_obj.bio }}</p>
+        {% else %}
+        <p style="color: var(--text-secondary); font-size: 0.85rem;">no bio yet. add one to tell people about yourself.</p>
+        {% endif %}
+
+        <div class="profile-stats">
+            <div class="stat-item">
+                <div class="stat-value">{{ user_projects|length }}</div>
+                <div class="stat-label">Projects</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">1.2k</div>
+                <div class="stat-label">Followers</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">850</div>
+                <div class="stat-label">Commits</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Area -->
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <!-- Achievements -->
+        <div class="card" style="padding: 1.5rem;">
+            <h3 style="font-family: var(--font-heading); margin-bottom: 1rem;">Badges</h3>
+            <div class="badge-grid">
+                {% if user_badges %}
+                {% for badge in user_badges %}
+                <div class="badge-item" title="{{ badge.name }}"><i class="fa-solid {{ badge.icon }}"></i></div>
+                {% endfor %}
+                {% else %}
+                <div class="badge-item" title="First Commit"><i class="fa-solid fa-code"></i></div>
+                <div class="badge-item" title="Security Master" style="color: var(--accent-purple);"><i class="fa-solid fa-shield-halved"></i></div>
+                <div class="badge-item" title="Top Contributor" style="color: var(--accent-green);"><i class="fa-solid fa-trophy"></i></div>
+                <div class="badge-item" title="Bug Hunter" style="color: #ffaa00;"><i class="fa-solid fa-bug"></i></div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Recent Projects -->
+        <div class="card" style="padding: 1.5rem;">
+            <h3 style="font-family: var(--font-heading); margin-bottom: 1rem;">Recent Projects</h3>
+            <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                {% for project in user_projects %}
+                <a href="{% url 'project_detail' project.pk %}" style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem; background: rgba(255,255,255,0.01); border-radius: 6px; text-decoration: none; color: inherit; border: 1px solid var(--border-color); transition: all 0.2s;">
+                    <div>
+                        <span style="color: var(--accent-blue); font-weight: 600;">{{ project.name }}</span>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.2rem;">{{ project.description|truncatewords:8 }}</div>
+                    </div>
+                </a>
+                {% empty %}
+                <div style="text-align: center; padding: 1.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                    no projects yet.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

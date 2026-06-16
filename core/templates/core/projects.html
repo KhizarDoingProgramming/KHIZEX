@@ -1,0 +1,161 @@
+{% extends 'core/base.html' %}
+{% load humanize %}
+
+{% block title %}Projects - KHIZEX{% endblock %}
+
+{% block extra_css %}
+.page-header {
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    padding: 0 2rem 2rem 2rem;
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    padding: 0 2rem 2rem 2rem;
+}
+
+.project-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.project-title {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.project-status {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.status-active { background: rgba(0, 255, 135, 0.1); color: var(--accent-green); }
+.status-pending { background: rgba(255, 170, 0, 0.1); color: #ffaa00; }
+
+.project-desc {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    flex: 1;
+}
+
+.progress-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+}
+
+.project-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+    margin-top: auto;
+}
+
+.team-avatars {
+    display: flex;
+    align-items: center;
+}
+
+.team-avatars .avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+    margin-left: -8px;
+    border: 2px solid var(--bg-color);
+}
+
+.team-avatars .avatar:first-child {
+    margin-left: 0;
+}
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 style="font-family: var(--font-heading); font-size: 2rem;">Projects</h1>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">manage and track all your active projects.</p>
+    </div>
+    <a href="{% url 'project_create' %}" style="background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple)); color: #fff; text-decoration: none; padding: 0.8rem 1.5rem; border-radius: 6px; font-weight: 600; box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);">+ New Project</a>
+</div>
+
+<!-- Stats -->
+<div class="stats-grid">
+    <div class="card">
+        <div style="color: var(--text-secondary); font-size: 0.85rem;">Total Projects</div>
+        <div style="font-size: 1.8rem; font-family: var(--font-heading); font-weight: 700; margin: 0.3rem 0;">{{ total_projects }}</div>
+    </div>
+    <div class="card">
+        <div style="color: var(--text-secondary); font-size: 0.85rem;">Active</div>
+        <div style="font-size: 1.8rem; font-family: var(--font-heading); font-weight: 700; margin: 0.3rem 0;">{{ active_projects }}</div>
+    </div>
+    <div class="card">
+        <div style="color: var(--text-secondary); font-size: 0.85rem;">Total Tasks</div>
+        <div style="font-size: 1.8rem; font-family: var(--font-heading); font-weight: 700; margin: 0.3rem 0;">{{ total_tasks }}</div>
+    </div>
+    <div class="card">
+        <div style="color: var(--text-secondary); font-size: 0.85rem;">Completed</div>
+        <div style="font-size: 1.8rem; font-family: var(--font-heading); font-weight: 700; margin: 0.3rem 0;">{{ done_tasks }}</div>
+    </div>
+</div>
+
+<!-- Projects Grid -->
+<div class="projects-grid">
+    {% for project in projects %}
+    <a href="{% url 'project_detail' project.pk %}" class="card project-card" style="text-decoration: none; color: inherit;">
+        <div class="project-header">
+            <div class="project-title">{{ project.name }}</div>
+            <span class="project-status status-active">Active</span>
+        </div>
+        <p class="project-desc">{{ project.description|default:"No description provided."|truncatewords:20 }}</p>
+        <div class="project-footer">
+            <div style="color: var(--text-secondary); font-size: 0.85rem;">
+                <i class="fa-solid fa-user"></i> {{ project.owner.username }}
+                {% if project.team %}
+                <span style="margin-left: 0.5rem;"><i class="fa-solid fa-users"></i> {{ project.team.name }}</span>
+                {% endif %}
+            </div>
+            <div style="color: var(--text-secondary); font-size: 0.8rem;">
+                {{ project.created_at|timesince }} ago
+            </div>
+        </div>
+    </a>
+    {% empty %}
+    <div style="grid-column: 1 / -1; text-align: center; padding: 4rem; color: var(--text-secondary);">
+        <i class="fa-solid fa-cube" style="font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.3;"></i>
+        <h3 style="font-family: var(--font-heading); margin-bottom: 0.5rem;">No projects yet</h3>
+        <p>create your first project to get started.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

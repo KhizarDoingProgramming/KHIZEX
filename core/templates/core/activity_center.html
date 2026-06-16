@@ -1,0 +1,86 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Activity Center - KHIZEX{% endblock %}
+
+{% block extra_css %}
+.page-header { padding: 2rem; display: flex; justify-content: space-between; align-items: center; }
+.timeline-container { padding: 0 2rem 2rem 2rem; max-width: 800px; }
+.timeline { position: relative; padding-left: 2rem; }
+.timeline::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--border-color); }
+.timeline-item { position: relative; margin-bottom: 2rem; }
+.timeline-icon { position: absolute; left: -2.7rem; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--bg-color); border: 2px solid var(--accent-blue); display: flex; justify-content: center; align-items: center; font-size: 0.8rem; color: var(--accent-blue); }
+.timeline-content { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; position: relative; }
+.timeline-content::before { content: ''; position: absolute; left: -6px; top: 8px; width: 10px; height: 10px; background: var(--card-bg); border-left: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); transform: rotate(45deg); }
+.timeline-time { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
+.timeline-title { font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 style="font-family: var(--font-heading); font-size: 2rem;">Activity Timeline</h1>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">chronological log of all platform operations.</p>
+    </div>
+</div>
+
+<div class="timeline-container">
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-icon"><i class="fa-solid fa-code-branch"></i></div>
+            <div class="timeline-content">
+                <div class="timeline-time">5 minutes ago</div>
+                <div class="timeline-title">KAME-HAME-HAA Deployed</div>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">Mustafa deployed the data processing pipeline to production. 10k records/sec throughput achieved.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-icon" style="border-color: var(--accent-green); color: var(--accent-green);"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="timeline-content">
+                <div class="timeline-time">30 minutes ago</div>
+                <div class="timeline-title">Spam Classifier Completed</div>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">Ahmed marked the Spam Email Classifier as done. 94% accuracy on test dataset.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-icon" style="border-color: var(--accent-purple); color: var(--accent-purple);"><i class="fa-solid fa-user-plus"></i></div>
+            <div class="timeline-content">
+                <div class="timeline-time">1 hour ago</div>
+                <div class="timeline-title">Safiya Joined AI & ML Team</div>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">Safiya Bano joined the AI & Machine Learning team as a Data Scientist.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-icon" style="border-color: #ffaa00; color: #ffaa00;"><i class="fa-solid fa-pen"></i></div>
+            <div class="timeline-content">
+                <div class="timeline-time">2 hours ago</div>
+                <div class="timeline-title">New Community Post</div>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">Umer posted about the CPU simulator: "Assembly programming hits different."</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-icon"><i class="fa-solid fa-cube"></i></div>
+            <div class="timeline-content">
+                <div class="timeline-time">3 hours ago</div>
+                <div class="timeline-title">MConnect Updated</div>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">Mustafa pushed new features to MConnect. Real-time messaging is now functional.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-icon" style="border-color: var(--accent-green); color: var(--accent-green);"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="timeline-content">
+                <div class="timeline-time">5 hours ago</div>
+                <div class="timeline-title">Security Audit Passed</div>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">Platform security audit completed with 0 vulnerabilities detected across all endpoints.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-icon" style="border-color: #ff0055; color: #ff0055;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="timeline-content">
+                <div class="timeline-time">Yesterday</div>
+                <div class="timeline-title">Node Maintenance</div>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">Islamabad node taken offline for scheduled maintenance. Back online in 2 hours.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

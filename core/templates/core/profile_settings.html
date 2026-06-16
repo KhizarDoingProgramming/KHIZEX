@@ -1,0 +1,140 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Profile Settings - KHIZEX{% endblock %}
+
+{% block extra_css %}
+.page-header {
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.form-container {
+    max-width: 600px;
+    padding: 0 2rem 2rem 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+}
+
+.form-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.form-input:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+}
+
+textarea.form-input {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple));
+    color: #fff;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 0.8rem 2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.section-title {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 style="font-family: var(--font-heading); font-size: 2rem;">Edit Profile</h1>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">update your identity across the platform.</p>
+    </div>
+</div>
+
+<div class="form-container">
+    <div class="card" style="padding: 2rem;">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="section-title">Account Info</div>
+            <div class="form-group">
+                <label>First Name</label>
+                {{ user_form.first_name }}
+            </div>
+            <div class="form-group">
+                <label>Last Name</label>
+                {{ user_form.last_name }}
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                {{ user_form.email }}
+            </div>
+
+            <div class="section-title" style="margin-top: 2rem;">Profile</div>
+            <div class="form-group">
+                <label>Bio</label>
+                {{ profile_form.bio }}
+            </div>
+            <div class="form-group">
+                <label>Avatar</label>
+                {{ profile_form.avatar }}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary"><i class="fa-solid fa-check"></i> Save Changes</button>
+                <a href="{% url 'profile' %}" class="btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

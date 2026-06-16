@@ -1,0 +1,121 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Admin Panel - KHIZEX{% endblock %}
+
+{% block extra_css %}
+.page-header {
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    padding: 0 2rem 2rem 2rem;
+}
+
+.admin-table-section {
+    padding: 0 2rem 2rem 2rem;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.admin-table th, .admin-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.admin-table th {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.users-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    padding: 0 2rem 2rem 2rem;
+}
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 style="font-family: var(--font-heading); font-size: 2rem;">Admin Control Center</h1>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">manage system resources, users, and platform security.</p>
+    </div>
+    <a href="/admin/" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); color: #fff; padding: 0.8rem 1.5rem; border-radius: 6px; font-weight: 600; text-decoration: none;">Django Admin</a>
+</div>
+
+<!-- Quick Stats -->
+<div class="admin-grid">
+    <div class="card">
+        <div style="color: var(--text-secondary); font-size: 0.85rem;">Total Users</div>
+        <div style="font-size: 1.8rem; font-family: var(--font-heading); font-weight: 700; margin: 0.3rem 0;">{{ total_users }}</div>
+        <div style="font-size: 0.75rem; color: var(--accent-green);"><i class="fa-solid fa-arrow-up"></i> growing</div>
+    </div>
+    <div class="card">
+        <div style="color: var(--text-secondary); font-size: 0.85rem;">Total Projects</div>
+        <div style="font-size: 1.8rem; font-family: var(--font-heading); font-weight: 700; margin: 0.3rem 0;">{{ total_projects }}</div>
+        <div style="font-size: 0.75rem; color: var(--accent-blue);">active</div>
+    </div>
+    <div class="card">
+        <div style="color: var(--text-secondary); font-size: 0.85rem;">Teams</div>
+        <div style="font-size: 1.8rem; font-family: var(--font-heading); font-weight: 700; margin: 0.3rem 0;">{{ total_teams }}</div>
+        <div style="font-size: 0.75rem; color: var(--accent-green);">all operational</div>
+    </div>
+</div>
+
+<!-- Recent Users -->
+<div class="admin-table-section">
+    <h2 style="font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 1rem;">Recent Users</h2>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Email</th>
+                <th>Joined</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in recent_users %}
+            <tr>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 0.8rem;">
+                        <div class="avatar" style="width: 32px; height: 32px; font-size: 0.75rem;">{{ u.username|truncatechars:1 }}</div>
+                        <div style="font-weight: 600;">{{ u.get_full_name|default:u.username }}</div>
+                    </div>
+                </td>
+                <td style="color: var(--text-secondary);">{{ u.email|default:"-" }}</td>
+                <td style="color: var(--text-secondary); font-size: 0.85rem;">{{ u.date_joined|timesince }} ago</td>
+                <td><span style="color: var(--accent-green);"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> Active</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Admin Actions -->
+<div style="padding: 0 2rem 2rem 2rem;">
+    <h2 style="font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 1rem;">Quick Actions</h2>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="/admin/auth/user/add/" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); color: #fff; padding: 0.8rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600;">+ Add User</a>
+        <a href="/admin/core/project/add/" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); color: #fff; padding: 0.8rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600;">+ Add Project</a>
+        <a href="/admin/core/team/add/" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); color: #fff; padding: 0.8rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600;">+ Add Team</a>
+        <a href="/admin/" style="background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2); color: var(--accent-blue); padding: 0.8rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600;">Open Django Admin</a>
+    </div>
+</div>
+{% endblock %}

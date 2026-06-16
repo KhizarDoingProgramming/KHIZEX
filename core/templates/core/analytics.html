@@ -1,0 +1,110 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Analytics - KHIZEX{% endblock %}
+
+{% block extra_css %}
+.page-header { padding: 2rem; display: flex; justify-content: space-between; align-items: center; }
+.analytics-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; padding: 0 2rem 2rem 2rem; }
+.col-4 { grid-column: span 4; } .col-6 { grid-column: span 6; } .col-8 { grid-column: span 8; } .col-12 { grid-column: span 12; }
+.chart-container { height: 300px; position: relative; }
+.data-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+.data-table th, .data-table td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+.data-table th { color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase; }
+.status-indicator { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 0.5rem; }
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 style="font-family: var(--font-heading); font-size: 2rem;">Analytics</h1>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">real-time telemetry and performance metrics.</p>
+    </div>
+</div>
+
+<div class="analytics-grid">
+    <div class="card col-8">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h3 style="font-family: var(--font-heading);">Project Activity</h3>
+            <div style="display: flex; gap: 1rem; font-size: 0.85rem;">
+                <span style="color: var(--accent-blue);"><i class="fa-solid fa-circle" style="font-size: 0.6rem;"></i> Active</span>
+                <span style="color: var(--accent-green);"><i class="fa-solid fa-circle" style="font-size: 0.6rem;"></i> Completed</span>
+            </div>
+        </div>
+        <div class="chart-container" style="height: 350px;"><canvas id="trafficChart"></canvas></div>
+    </div>
+
+    <div class="card col-4">
+        <h3 style="font-family: var(--font-heading); margin-bottom: 1.5rem;">Task Distribution</h3>
+        <div class="chart-container" style="height: 250px;"><canvas id="resourceChart"></canvas></div>
+        <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.8rem;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.9rem;"><span style="color: var(--text-secondary);">To Do</span><span>10 tasks</span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.9rem;"><span style="color: var(--text-secondary);">In Progress</span><span>10 tasks</span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.9rem;"><span style="color: var(--text-secondary);">Completed</span><span>10 tasks</span></div>
+        </div>
+    </div>
+
+    <div class="card col-4">
+        <h3 style="font-family: var(--font-heading); font-size: 1rem; margin-bottom: 1rem;">Total Projects</h3>
+        <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">{{ total_projects }}</div>
+        <div class="chart-container" style="height: 100px;"><canvas id="cpuChart"></canvas></div>
+    </div>
+    <div class="card col-4">
+        <h3 style="font-family: var(--font-heading); font-size: 1rem; margin-bottom: 1rem;">Total Tasks</h3>
+        <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">{{ total_tasks }}</div>
+        <div class="chart-container" style="height: 100px;"><canvas id="memoryChart"></canvas></div>
+    </div>
+    <div class="card col-4">
+        <h3 style="font-family: var(--font-heading); font-size: 1rem; margin-bottom: 1rem;">Completion Rate</h3>
+        <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">{% widthratio done_tasks total_tasks 100 %}%</div>
+        <div class="chart-container" style="height: 100px;"><canvas id="latencyChart"></canvas></div>
+    </div>
+
+    <div class="card col-12">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 style="font-family: var(--font-heading);">Network Nodes</h3>
+        </div>
+        <table class="data-table">
+            <thead><tr><th>Node ID</th><th>Location</th><th>Status</th><th>Load</th><th>Uptime (days)</th></tr></thead>
+            <tbody>
+                {% for node in nodes %}
+                <tr>
+                    <td>{{ node.id }}</td>
+                    <td>{{ node.location }}</td>
+                    <td><span class="status-indicator" style="background: {% if node.status == 'Active' %}var(--accent-green){% else %}#ffaa00{% endif %};"></span>{{ node.status }}</td>
+                    <td>{{ node.load }}%</td>
+                    <td>{{ node.uptime }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const ctxTraffic = document.getElementById('trafficChart').getContext('2d');
+    new Chart(ctxTraffic, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [
+                { label: 'Active Tasks', data: [12, 19, 15, 22, 18, 25], borderColor: '#00f0ff', borderWidth: 2, tension: 0.4, fill: false },
+                { label: 'Completed', data: [8, 14, 12, 18, 15, 20], borderColor: '#00ff87', borderWidth: 2, tension: 0.4, fill: false }
+            ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8a8aa3' } }, x: { grid: { display: false }, ticks: { color: '#8a8aa3' } } }, plugins: { legend: { display: false } } }
+    });
+
+    const ctxResource = document.getElementById('resourceChart').getContext('2d');
+    new Chart(ctxResource, { type: 'doughnut', data: { labels: ['To Do', 'In Progress', 'Done'], datasets: [{ data: [10, 10, 10], backgroundColor: ['#8a8aa3', '#00f0ff', '#00ff87'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '70%' } });
+
+    function createSparkline(id, data, color) {
+        const ctx = document.getElementById(id).getContext('2d');
+        new Chart(ctx, { type: 'line', data: { labels: data.map((_, i) => i), datasets: [{ data, borderColor: color, borderWidth: 2, tension: 0.4, pointRadius: 0, fill: false }] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { display: false }, y: { display: false } }, plugins: { legend: { display: false } } } });
+    }
+    createSparkline('cpuChart', [15, 18, 16, 19, 17, 20], '#00f0ff');
+    createSparkline('memoryChart', [25, 28, 30, 27, 32, 30], '#bc00ff');
+    createSparkline('latencyChart', [33, 35, 38, 36, 40, 33], '#00ff87');
+</script>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Marketplace - KHIZEX{% endblock %}
+
+{% block extra_css %}
+.page-header { padding: 2rem; display: flex; justify-content: space-between; align-items: center; }
+.marketplace-layout { display: grid; grid-template-columns: 240px 1fr; gap: 1.5rem; padding: 0 2rem 2rem 2rem; }
+.sidebar-filters { display: flex; flex-direction: column; gap: 1.5rem; }
+.filter-group h4 { font-family: var(--font-heading); font-size: 1rem; margin-bottom: 0.8rem; color: var(--text-secondary); }
+.filter-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+.filter-list label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer; color: #d1d1e0; }
+.filter-list input[type="checkbox"] { accent-color: var(--accent-blue); }
+.items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+.item-card { display: flex; flex-direction: column; gap: 1rem; overflow: hidden; }
+.item-image { height: 160px; background: linear-gradient(135deg, rgba(0,240,255,0.1), rgba(188,0,255,0.1)); border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 3rem; color: rgba(255,255,255,0.2); border: 1px solid var(--border-color); }
+.item-title { font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; }
+.item-price { font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; color: var(--accent-blue); }
+.item-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+.buy-btn { background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); color: #fff; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.2s; }
+.buy-btn:hover { background: var(--accent-blue); color: #000; border-color: var(--accent-blue); box-shadow: 0 0 10px rgba(0,240,255,0.3); }
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 style="font-family: var(--font-heading); font-size: 2rem;">Marketplace</h1>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">acquire modules, datasets, and tools for your projects.</p>
+    </div>
+</div>
+
+<div class="marketplace-layout">
+    <div class="sidebar-filters">
+        <div class="filter-group">
+            <h4>Categories</h4>
+            <ul class="filter-list">
+                <li><label><input type="checkbox" checked> AI Models</label></li>
+                <li><label><input type="checkbox" checked> Datasets</label></li>
+                <li><label><input type="checkbox"> UI Kits</label></li>
+                <li><label><input type="checkbox"> APIs</label></li>
+                <li><label><input type="checkbox"> Templates</label></li>
+            </ul>
+        </div>
+        <div class="filter-group">
+            <h4>Price Range</h4>
+            <ul class="filter-list">
+                <li><label><input type="radio" name="price" checked> All</label></li>
+                <li><label><input type="radio" name="price"> Under 1000 KZX</label></li>
+                <li><label><input type="radio" name="price"> 1000 - 5000 KZX</label></li>
+                <li><label><input type="radio" name="price"> 5000+ KZX</label></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="items-grid">
+        <div class="card item-card">
+            <div class="item-image"><i class="fa-solid fa-brain"></i></div>
+            <div><div class="item-title">Spam Classifier Model</div><p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.2rem;">NLP-powered email filtering trained on 100k+ emails.</p></div>
+            <div class="item-footer"><div class="item-price">2,500 KZX</div><button class="buy-btn">Acquire</button></div>
+        </div>
+        <div class="card item-card">
+            <div class="item-image" style="background: linear-gradient(135deg, rgba(0,255,135,0.1), rgba(0,240,255,0.1));"><i class="fa-solid fa-database"></i></div>
+            <div><div class="item-title">Health Dataset Pack</div><p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.2rem;">Comprehensive medical data for 5M patients.</p></div>
+            <div class="item-footer"><div class="item-price">5,000 KZX</div><button class="buy-btn">Acquire</button></div>
+        </div>
+        <div class="card item-card">
+            <div class="item-image" style="background: linear-gradient(135deg, rgba(255,0,85,0.1), rgba(188,0,255,0.1));"><i class="fa-solid fa-shield-halved"></i></div>
+            <div><div class="item-title">Security Audit Tool</div><p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.2rem;">Automated vulnerability scanner for web apps.</p></div>
+            <div class="item-footer"><div class="item-price">1,200 KZX</div><button class="buy-btn">Acquire</button></div>
+        </div>
+        <div class="card item-card">
+            <div class="item-image" style="background: linear-gradient(135deg, rgba(255,170,0,0.1), rgba(255,0,85,0.1));"><i class="fa-solid fa-palette"></i></div>
+            <div><div class="item-title">Cyberpunk UI Kit</div><p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.2rem;">50+ components for futuristic web interfaces.</p></div>
+            <div class="item-footer"><div class="item-price">450 KZX</div><button class="buy-btn">Acquire</button></div>
+        </div>
+        <div class="card item-card">
+            <div class="item-image" style="background: linear-gradient(135deg, rgba(0,240,255,0.1), rgba(0,255,135,0.1));"><i class="fa-solid fa-robot"></i></div>
+            <div><div class="item-title">AI Chatbot Template</div><p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.2rem;">Ready-to-deploy conversational AI with context memory.</p></div>
+            <div class="item-footer"><div class="item-price">3,000 KZX</div><button class="buy-btn">Acquire</button></div>
+        </div>
+        <div class="card item-card">
+            <div class="item-image" style="background: linear-gradient(135deg, rgba(188,0,255,0.1), rgba(255,170,0,0.1));"><i class="fa-solid fa-chart-bar"></i></div>
+            <div><div class="item-title">Analytics Dashboard</div><p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.2rem;">Real-time charts and metrics with Chart.js integration.</p></div>
+            <div class="item-footer"><div class="item-price">800 KZX</div><button class="buy-btn">Acquire</button></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

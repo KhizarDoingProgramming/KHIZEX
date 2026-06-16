@@ -1,0 +1,65 @@
+{% extends 'core/base.html' %}
+
+{% block title %}File Manager - KHIZEX{% endblock %}
+
+{% block extra_css %}
+.page-header { padding: 2rem; display: flex; justify-content: space-between; align-items: center; }
+.file-layout { display: grid; grid-template-columns: 240px 1fr; gap: 1.5rem; padding: 0 2rem 2rem 2rem; }
+.folder-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+.folder-list a { color: var(--text-secondary); text-decoration: none; display: flex; align-items: center; gap: 0.8rem; padding: 0.6rem 1rem; border-radius: 6px; transition: all 0.2s; font-size: 0.95rem; }
+.folder-list a:hover, .folder-list a.active { color: var(--text-primary); background: rgba(255,255,255,0.03); }
+.folder-list a.active { color: var(--accent-blue); background: rgba(0,240,255,0.05); }
+.file-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1.5rem; }
+.file-card { display: flex; flex-direction: column; align-items: center; gap: 0.8rem; padding: 1.5rem; text-align: center; cursor: pointer; }
+.file-icon { font-size: 3rem; color: var(--text-secondary); transition: color 0.2s; }
+.file-card:hover .file-icon { color: var(--accent-blue); }
+.file-name { font-size: 0.9rem; font-weight: 600; word-break: break-all; }
+.file-size { font-size: 0.75rem; color: var(--text-secondary); }
+.storage-usage { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border-color); }
+.progress-bar { height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple)); }
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 style="font-family: var(--font-heading); font-size: 2rem;">File Archive</h1>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">manage your data fragments and project files.</p>
+    </div>
+</div>
+
+<div class="file-layout">
+    <div>
+        <ul class="folder-list">
+            <li><a href="#" class="active"><i class="fa-solid fa-folder"></i> All Files</a></li>
+            <li><a href="#"><i class="fa-solid fa-folder"></i> Python Projects</a></li>
+            <li><a href="#"><i class="fa-solid fa-folder"></i> C++ Code</a></li>
+            <li><a href="#"><i class="fa-solid fa-folder"></i> Web Dev</a></li>
+            <li><a href="#"><i class="fa-solid fa-folder"></i> Datasets</a></li>
+            <li><a href="#"><i class="fa-solid fa-trash"></i> Trash</a></li>
+        </ul>
+        <div class="storage-usage">
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.5rem;">
+                <span style="color: var(--text-secondary);">Storage Used</span><span>62%</span>
+            </div>
+            <div class="progress-bar" style="height: 4px;">
+                <div class="progress-fill" style="width: 62%;"></div>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.3rem;">620 GB of 1 TB</div>
+        </div>
+    </div>
+
+    <div class="file-grid">
+        <div class="card file-card"><i class="fa-solid fa-file-code file-icon"></i><div><div class="file-name">kame_hame_haa.py</div><div class="file-size">45 KB</div></div></div>
+        <div class="card file-card"><i class="fa-solid fa-file-code file-icon"></i><div><div class="file-name">banking_system.asm</div><div class="file-size">128 KB</div></div></div>
+        <div class="card file-card"><i class="fa-solid fa-file-csv file-icon"></i><div><div class="file-name">health_data.csv</div><div class="file-size">2.1 GB</div></div></div>
+        <div class="card file-card"><i class="fa-solid fa-file-code file-icon"></i><div><div class="file-name">pet_simulator.cpp</div><div class="file-size">67 KB</div></div></div>
+        <div class="card file-card"><i class="fa-solid fa-file-lines file-icon"></i><div><div class="file-name">api_docs.md</div><div class="file-size">12 KB</div></div></div>
+        <div class="card file-card"><i class="fa-solid fa-file-image file-icon"></i><div><div class="file-name">logo_design.png</div><div class="file-size">3.4 MB</div></div></div>
+        <div class="card file-card"><i class="fa-solid fa-file-pdf file-icon"></i><div><div class="file-name">security_audit.pdf</div><div class="file-size">1.2 MB</div></div></div>
+        <div class="card file-card"><i class="fa-solid fa-folder file-icon" style="color: #ffaa00;"></i><div><div class="file-name">CampusBook</div><div class="file-size">24 files</div></div></div>
+        <div class="card file-card"><i class="fa-solid fa-folder file-icon" style="color: #ffaa00;"></i><div><div class="file-name">MConnect</div><div class="file-size">18 files</div></div></div>
+        <div class="card file-card"><i class="fa-solid fa-file-code file-icon"></i><div><div class="file-name">spam_classifier.py</div><div class="file-size">89 KB</div></div></div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KHIZEX - Next-Gen Web Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #05050a;
+            --text-color: #ffffff;
+            --accent-blue: #00f0ff;
+            --accent-purple: #bc00ff;
+            --accent-green: #00ff87;
+            --accent-pink: #ff0055;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --font-heading: 'Space Grotesk', sans-serif;
+            --font-body: 'Outfit', sans-serif;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: var(--bg-color); color: var(--text-color); font-family: var(--font-body); overflow-x: hidden; }
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+
+        /* Loading Screen */
+        #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #030305; display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.5s ease, visibility 0.5s ease; }
+        .loader-content { text-align: center; }
+        .loader-logo { font-family: var(--font-heading); font-size: 3rem; font-weight: 700; background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0.5rem; margin-bottom: 1rem; }
+        .loader-bar { width: 200px; height: 2px; background: rgba(255,255,255,0.1); margin: 0 auto; position: relative; overflow: hidden; }
+        .loader-progress { width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple)); position: absolute; top: 0; left: 0; animation: progress 2s ease-in-out infinite; }
+        @keyframes progress { 0% { width: 0%; left: 0; } 50% { width: 100%; left: 0; } 100% { width: 0%; left: 100%; } }
+
+        /* Nav */
+        nav { position: fixed; top: 0; left: 0; width: 100%; z-index: 100; backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border); background: rgba(5,5,10,0.8); }
+        .nav-inner { display: flex; justify-content: space-between; align-items: center; height: 80px; }
+        .nav-logo { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; letter-spacing: 2px; }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a { color: #fff; text-decoration: none; opacity: 0.8; transition: opacity 0.3s; font-size: 0.95rem; }
+        .nav-links a:hover { opacity: 1; }
+        .nav-btn { background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple)); color: #fff !important; padding: 0.8rem 1.5rem; border-radius: 6px; font-weight: 600; box-shadow: 0 0 20px rgba(0,240,255,0.3); opacity: 1 !important; }
+
+        /* Hero */
+        .hero { height: 100vh; display: flex; align-items: center; position: relative; }
+        .hero-title { font-family: var(--font-heading); font-size: clamp(3rem, 8vw, 5.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; }
+        .gradient-text { background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-desc { font-size: 1.2rem; opacity: 0.7; line-height: 1.6; margin-bottom: 2.5rem; max-width: 600px; }
+        .hero-btns { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+        .btn-white { background: #fff; color: #000; text-decoration: none; padding: 1rem 2rem; border-radius: 6px; font-weight: 600; transition: transform 0.3s; }
+        .btn-white:hover { transform: translateY(-2px); }
+        .btn-outline { border: 1px solid rgba(255,255,255,0.2); color: #fff; text-decoration: none; padding: 1rem 2rem; border-radius: 6px; font-weight: 600; backdrop-filter: blur(5px); transition: background 0.3s; }
+        .btn-outline:hover { background: rgba(255,255,255,0.05); }
+
+        /* Stats Bar */
+        .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; padding: 3rem 0; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); margin: 0 2rem; }
+        .stat-item { text-align: center; }
+        .stat-num { font-family: var(--font-heading); font-size: 2.5rem; font-weight: 700; }
+        .stat-label { color: rgba(255,255,255,0.5); font-size: 0.9rem; margin-top: 0.3rem; }
+
+        /* Features */
+        .section { padding: 100px 0; }
+        .section-title { font-family: var(--font-heading); font-size: 2.8rem; font-weight: 700; text-align: center; margin-bottom: 1rem; }
+        .section-desc { text-align: center; opacity: 0.6; max-width: 600px; margin: 0 auto 4rem auto; font-size: 1.05rem; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .feature-card { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 2.5rem; border-radius: 12px; backdrop-filter: blur(10px); transition: transform 0.3s, border-color 0.3s; }
+        .feature-card:hover { transform: translateY(-5px); border-color: rgba(0,240,255,0.2); }
+        .feature-icon { font-size: 2rem; margin-bottom: 1.2rem; }
+        .feature-title { font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 0.8rem; }
+        .feature-desc { opacity: 0.6; line-height: 1.6; font-size: 0.95rem; }
+
+        /* Projects Showcase */
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; }
+        .project-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; overflow: hidden; transition: transform 0.3s; }
+        .project-card:hover { transform: translateY(-5px); }
+        .project-img { height: 200px; display: flex; justify-content: center; align-items: center; font-size: 3rem; }
+        .project-body { padding: 1.5rem; }
+        .project-name { font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .project-desc { color: rgba(255,255,255,0.5); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1rem; }
+        .project-lang { display: inline-block; font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 4px; font-weight: 600; }
+
+        /* Team */
+        .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; }
+        .team-card { text-align: center; padding: 2rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; transition: transform 0.3s; }
+        .team-card:hover { transform: translateY(-5px); }
+        .team-avatar { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 1rem auto; display: flex; justify-content: center; align-items: center; font-size: 2rem; font-weight: bold; }
+        .team-name { font-family: var(--font-heading); font-weight: 700; font-size: 1.1rem; margin-bottom: 0.3rem; }
+        .team-role { color: rgba(255,255,255,0.5); font-size: 0.85rem; }
+
+        /* CTA */
+        .cta { text-align: center; padding: 100px 0; }
+        .cta-box { background: linear-gradient(135deg, rgba(0,240,255,0.05) 0%, rgba(188,0,255,0.05) 100%); border: 1px solid var(--glass-border); border-radius: 16px; padding: 4rem 2rem; }
+
+        /* Footer */
+        footer { border-top: 1px solid var(--glass-border); padding: 3rem 0; }
+        .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .footer-links { display: flex; gap: 2rem; }
+        .footer-links a { color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--accent-blue); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-bar { grid-template-columns: repeat(2, 1fr); }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Loader -->
+    <div id="loader">
+        <div class="loader-content">
+            <div class="loader-logo">KHIZEX</div>
+            <div class="loader-bar"><div class="loader-progress"></div></div>
+        </div>
+    </div>
+
+    <!-- Nav -->
+    <nav>
+        <div class="container nav-inner">
+            <div class="nav-logo"><span style="color: var(--accent-blue)">KHI</span>ZEX</div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#projects">Projects</a>
+                <a href="#team">Team</a>
+                <a href="#pricing">Pricing</a>
+                <a href="{% url 'login' %}" class="nav-btn">Launch App</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div style="max-width: 800px;">
+                <div class="hero-title">The Future of <span class="gradient-text">Intelligent</span> Ecosystems.</div>
+                <p class="hero-desc">Experience the next generation of enterprise management. Built by developers, for developers. AI-powered, real-time, and absolutely insane.</p>
+                <div class="hero-btns">
+                    <a href="{% url 'register' %}" class="btn-white">Get Started Free</a>
+                    <a href="{% url 'login' %}" class="btn-outline">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-num gradient-text">{{ total_users }}+</div>
+            <div class="stat-label">Active Developers</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num gradient-text">{{ total_projects }}+</div>
+            <div class="stat-label">Projects Built</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num gradient-text">{{ total_teams }}+</div>
+            <div class="stat-label">Teams Online</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num gradient-text">99.9%</div>
+            <div class="stat-label">Platform Uptime</div>
+        </div>
+    </div>
+
+    <!-- Features -->
+    <section class="section" id="features">
+        <div class="container">
+            <div class="section-title">Core Infrastructure</div>
+            <p class="section-desc">Massive scale meets microscopic precision. KHIZEX delivers unprecedented power for modern development teams.</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon" style="color: var(--accent-blue);"><i class="fa-solid fa-brain"></i></div>
+                    <div class="feature-title">AI-Powered Assistant</div>
+                    <div class="feature-desc">Built-in neural assistant that predicts bottlenecks, suggests optimizations, and helps you ship faster.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="color: var(--accent-purple);"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="feature-title">Real-Time Collaboration</div>
+                    <div class="feature-desc">Live messaging, task boards, and project updates. Your team stays in sync no matter where they are.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="color: var(--accent-green);"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="feature-title">Quantum-Grade Security</div>
+                    <div class="feature-desc">End-to-end encryption, zero-trust architecture, and automated security audits. Sleep easy.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="color: var(--accent-pink);"><i class="fa-solid fa-chart-line"></i></div>
+                    <div class="feature-title">Advanced Analytics</div>
+                    <div class="feature-desc">Deep insights into team velocity, project health, and resource allocation. Data-driven decisions.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="color: #ffaa00;"><i class="fa-solid fa-code-branch"></i></div>
+                    <div class="feature-title">GitHub Integration</div>
+                    <div class="feature-desc">Seamlessly connect your repos, track commits, and visualize your codebase directly from the platform.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="color: var(--accent-blue);"><i class="fa-solid fa-users"></i></div>
+                    <div class="feature-title">Team Management</div>
+                    <div class="feature-desc">Create teams, assign roles, track contributions, and manage access with granular permissions.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Showcase -->
+    <section class="section" id="projects" style="background: rgba(255,255,255,0.01);">
+        <div class="container">
+            <div class="section-title">Projects on KHIZEX</div>
+            <p class="section-desc">Real projects built by our team. From machine learning to full-stack web apps.</p>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-img" style="background: linear-gradient(135deg, rgba(0,240,255,0.1), rgba(188,0,255,0.1));"><i class="fa-solid fa-database" style="color: var(--accent-blue);"></i></div>
+                    <div class="project-body">
+                        <div class="project-name">KAME-HAME-HAA</div>
+                        <div class="project-desc">Python-powered data processing pipeline with advanced algorithms and data structures.</div>
+                        <span class="project-lang" style="background: rgba(55,118,171,0.2); color: #3776ab;">Python</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-img" style="background: linear-gradient(135deg, rgba(0,255,135,0.1), rgba(0,240,255,0.1));"><i class="fa-solid fa-comments" style="color: var(--accent-green);"></i></div>
+                    <div class="project-body">
+                        <div class="project-name">MConnect</div>
+                        <div class="project-desc">Real-time messaging and social connectivity platform built with TypeScript.</div>
+                        <span class="project-lang" style="background: rgba(49,120,198,0.2); color: #3178c6;">TypeScript</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-img" style="background: linear-gradient(135deg, rgba(255,0,85,0.1), rgba(188,0,255,0.1));"><i class="fa-solid fa-microchip" style="color: var(--accent-pink);"></i></div>
+                    <div class="project-body">
+                        <div class="project-name">Banking System ASM</div>
+                        <div class="project-desc">Low-level banking system simulation written in x86 Assembly language.</div>
+                        <span class="project-lang" style="background: rgba(0,240,255,0.15); color: var(--accent-blue);">Assembly</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-img" style="background: linear-gradient(135deg, rgba(0,255,135,0.1), rgba(255,170,0,0.1));"><i class="fa-solid fa-heart-pulse" style="color: var(--accent-green);"></i></div>
+                    <div class="project-body">
+                        <div class="project-name">Heart Disease Predictor</div>
+                        <div class="project-desc">Neural network-based health diagnostic tool for heart disease risk assessment.</div>
+                        <span class="project-lang" style="background: rgba(55,118,171,0.2); color: #3776ab;">Python</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-img" style="background: linear-gradient(135deg, rgba(255,170,0,0.1), rgba(255,0,85,0.1));"><i class="fa-solid fa-store" style="color: #ffaa00;"></i></div>
+                    <div class="project-body">
+                        <div class="project-name">CampusBook</div>
+                        <div class="project-desc">Digital library and book management system for university campuses.</div>
+                        <span class="project-lang" style="background: rgba(77,120,204,0.2); color: #4d78cc;">PHP</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-img" style="background: linear-gradient(135deg, rgba(188,0,255,0.1), rgba(0,240,255,0.1));"><i class="fa-solid fa-gamepad" style="color: var(--accent-purple);"></i></div>
+                    <div class="project-body">
+                        <div class="project-name">Pet Simulator Game</div>
+                        <div class="project-desc">Object-oriented pet simulation game built in C++ with full OOP principles.</div>
+                        <span class="project-lang" style="background: rgba(0,89,156,0.2); color: #00599c;">C++</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team -->
+    <section class="section" id="team">
+        <div class="container">
+            <div class="section-title">Meet the Team</div>
+            <p class="section-desc">The incredible humans behind KHIZEX. Builders, dreamers, and caffeine-powered code machines.</p>
+            <div class="team-grid">
+                {% for member in team_members %}
+                <div class="team-card">
+                    <div class="team-avatar" style="background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple));">{{ member.user.first_name|first|upper }}</div>
+                    <div class="team-name">{{ member.user.get_full_name }}</div>
+                    <div class="team-role">{{ member.get_role_display }}</div>
+                </div>
+                {% empty %}
+                <div class="team-card">
+                    <div class="team-avatar" style="background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple));">M</div>
+                    <div class="team-name">Ghulam Mustafa Khizar</div>
+                    <div class="team-role">Founder & Lead Developer</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack -->
+    <section class="section" style="background: rgba(255,255,255,0.01);">
+        <div class="container">
+            <div class="section-title">Tech Stack</div>
+            <p class="section-desc">Built with the best tools in the game.</p>
+            <div style="display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; opacity: 0.6;">
+                <div style="text-align: center;"><i class="fa-brands fa-python" style="font-size: 3rem; color: #3776ab;"></i><div style="font-size: 0.8rem; margin-top: 0.5rem;">Python</div></div>
+                <div style="text-align: center;"><i class="fa-brands fa-js" style="font-size: 3rem; color: #f7df1e;"></i><div style="font-size: 0.8rem; margin-top: 0.5rem;">JavaScript</div></div>
+                <div style="text-align: center;"><i class="fa-brands fa-php" style="font-size: 3rem; color: #777bb4;"></i><div style="font-size: 0.8rem; margin-top: 0.5rem;">PHP</div></div>
+                <div style="text-align: center;"><i class="fa-brands fa-cplusplus" style="font-size: 3rem; color: #00599c;"></i><div style="font-size: 0.8rem; margin-top: 0.5rem;">C++</div></div>
+                <div style="text-align: center;"><i class="fa-brands fa-html5" style="font-size: 3rem; color: #e34f26;"></i><div style="font-size: 0.8rem; margin-top: 0.5rem;">HTML5</div></div>
+                <div style="text-align: center;"><i class="fa-brands fa-css3-alt" style="font-size: 3rem; color: #1572b6;"></i><div style="font-size: 0.8rem; margin-top: 0.5rem;">CSS3</div></div>
+                <div style="text-align: center;"><i class="fa-brands fa-docker" style="font-size: 3rem; color: #2496ed;"></i><div style="font-size: 0.8rem; margin-top: 0.5rem;">Docker</div></div>
+                <div style="text-align: center;"><i class="fa-brands fa-git-alt" style="font-size: 3rem; color: #f05032;"></i><div style="font-size: 0.8rem; margin-top: 0.5rem;">Git</div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-box">
+                <div class="section-title">Ready to Build the Future?</div>
+                <p class="section-desc">Join KHIZEX today and start shipping projects at warp speed. Free for teams up to 5.</p>
+                <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="{% url 'register' %}" class="btn-white">Create Free Account</a>
+                    <a href="{% url 'login' %}" class="btn-outline">Sign In to Dashboard</a>
+                    <a href="https://github.com/KhizarDoingProgramming" target="_blank" class="btn-outline"><i class="fa-brands fa-github"></i> GitHub</a>
+                    <a href="https://discord.gg/khizarwantsmangoes" target="_blank" class="btn-outline"><i class="fa-brands fa-discord"></i> Discord</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-inner">
+            <div class="nav-logo"><span style="color: var(--accent-blue)">KHI</span>ZEX</div>
+            <div class="footer-links">
+                <a href="#features">Platform</a>
+                <a href="https://github.com/KhizarDoingProgramming/KHIZEX/wiki" target="_blank">Docs</a>
+                <a href="https://github.com/KhizarDoingProgramming" target="_blank">GitHub</a>
+                <a href="https://discord.gg/khizarwantsmangoes" target="_blank">Discord</a>
+            </div>
+            <div style="color: rgba(255,255,255,0.3); font-size: 0.85rem;">&copy; 2026 KHIZEX. Built with <span style="color: var(--accent-pink);">love</span> in Pakistan.</div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script>
+        // Three.js Background
+        const canvas = document.getElementById('bg-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        const particlesGeometry = new THREE.BufferGeometry();
+        const count = 2000;
+        const positions = new Float32Array(count * 3);
+        for(let i = 0; i < count * 3; i++) { positions[i] = (Math.random() - 0.5) * 10; }
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+        const particlesMaterial = new THREE.PointsMaterial({ size: 0.01, color: 0x00f0ff, transparent: true, opacity: 0.5 });
+        const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particles);
+        camera.position.z = 2;
+
+        const clock = new THREE.Clock();
+        function animate() {
+            const elapsed = clock.getElapsedTime();
+            particles.rotation.y = elapsed * 0.02;
+            particles.rotation.x = elapsed * 0.01;
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // GSAP Animations
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                document.getElementById('loader').style.visibility = 'hidden';
+                gsap.from('.hero-title, .hero-desc, .hero-btns', { y: 50, opacity: 0, duration: 1, stagger: 0.2, ease: 'power3.out' });
+            }, 1000);
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+    </script>
+</body>
+</html>
