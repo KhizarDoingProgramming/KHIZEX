@@ -77,6 +77,11 @@ DATABASES = {
 }
 
 database_url = os.environ.get('DATABASE_URL')
+if not database_url:
+    # Try reading from a file (for PythonAnywhere WSGI issues)
+    database_url_file = BASE_DIR / 'database_url.txt'
+    if database_url_file.exists():
+        database_url = database_url_file.read_text().strip()
 if database_url:
     import dj_database_url
     DATABASES['default'] = dj_database_url.parse(database_url, conn_max_age=600)
