@@ -4,8 +4,8 @@
 > 
 > **Author:** MUSTAFA ([@KhizarDoingProgramming](https://github.com/KhizarDoingProgramming))
 
-[![Python](https://img.shields.io/badge/python-3.14+-blue?style=for-the-badge&logo=python)](https://python.org)
-[![Django](https://img.shields.io/badge/django-6.0+-green?style=for-the-badge&logo=django)](https://djangoproject.com)
+[![Python](https://img.shields.io/badge/python-3.11+-blue?style=for-the-badge&logo=python)](https://python.org)
+[![Django](https://img.shields.io/badge/django-5.2+-green?style=for-the-badge&logo=django)](https://djangoproject.com)
 [![PythonAnywhere](https://img.shields.io/badge/host-pythonanywhere-323232?style=for-the-badge)](https://pythonanywhere.com)
 [![License](https://img.shields.io/badge/license-MIT-purple?style=for-the-badge)]()
 
@@ -39,11 +39,11 @@ Built with Django + modern JS, this isn't your grandma's CRUD app. It's got AI a
 ## Tech Stack 💻
 
 ```
-Backend:   Python 3.14 + Django 6.0
+Backend:   Python 3.11 + Django 5.2
 Frontend:  HTML5, CSS3, JavaScript, Three.js, GSAP
 Icons:     Font Awesome
 Fonts:     Space Grotesk, Outfit
-Database:  SQLite (use Postgres )
+Database:  SQLite / Supabase PostgreSQL
 ```
 
 ---
@@ -117,7 +117,7 @@ KHIZEX/
 **Step 2:** Set up PythonAnywhere
 1. Sign up at https://pythonanywhere.com
 2. Go to "Web" tab → "Add a new web app"
-3. Choose "Manual configuration" → Python 3.11+
+3. Choose "Manual configuration" → Python 3.11
 4. Clone your repo:
    ```bash
    git clone https://github.com/KhizarDoingProgramming/KHIZEX.git
@@ -135,7 +135,7 @@ Edit the WSGI file (in PythonAnywhere Web tab) to:
 ```python
 import os
 import sys
-path = '/home/YOUR_USERNAME/KHIZEX'
+path = '/home/khizex/KHIZEX'
 if path not in sys.path:
     sys.path.append(path)
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'khizex.settings')
@@ -151,13 +151,13 @@ application = get_wsgi_application()
    DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@db.supabase.co:5432/postgres
    SECRET_KEY=your-random-secret-key-here
    DEBUG=False
-   ALLOWED_HOSTS=YOUR_USERNAME.pythonanywhere.com
+   ALLOWED_HOSTS=khizex.pythonanywhere.com
    ```
 
 **Step 5:** Static & Media files
 - In Web tab → Static files:
-  - URL: `/static/` → Directory: `/home/YOUR_USERNAME/KHIZEX/staticfiles`
-  - URL: `/media/` → Directory: `/home/YOUR_USERNAME/KHIZEX/media`
+  - URL: `/static/` → Directory: `/home/khizex/KHIZEX/staticfiles`
+  - URL: `/media/` → Directory: `/home/khizex/KHIZEX/media`
 
 **Step 6:** Migrate database
 ```bash
