@@ -172,6 +172,7 @@ Current settings have these hardcoded - change before going live fr fr.
 | `/marketplace` | Marketplace | Shop integration |
 | `/file-manager` | Files | File uploads |
 | `/admin` | Admin | Django admin |
+
 ---
 
 ## Screenshots (Coming Soon) 📸
