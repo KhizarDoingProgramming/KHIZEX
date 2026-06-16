@@ -270,19 +270,21 @@
             <div class="section-title">Meet the Team</div>
             <p class="section-desc">The incredible humans behind KHIZEX. Builders, dreamers, and caffeine-powered code machines.</p>
             <div class="team-grid">
-                {% for member in team_members %}
                 <div class="team-card">
-                    <div class="team-avatar" style="background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple));">{{ member.user.first_name|first|upper }}</div>
-                    <div class="team-name">{{ member.user.get_full_name }}</div>
-                    <div class="team-role">{{ member.get_role_display }}</div>
+                    <div class="team-avatar" style="background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple));">K</div>
+                    <div class="team-name">Kashif Mirza</div>
+                    <div class="team-role">Co-Founder & Developer</div>
                 </div>
-                {% empty %}
                 <div class="team-card">
-                    <div class="team-avatar" style="background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple));">M</div>
-                    <div class="team-name">MUSTAFA</div>
-                    <div class="team-role">Founder & Lead Developer</div>
+                    <div class="team-avatar" style="background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));">H</div>
+                    <div class="team-name">Hammad Ali</div>
+                    <div class="team-role">Full-Stack Developer</div>
                 </div>
-                {% endfor %}
+                <div class="team-card">
+                    <div class="team-avatar" style="background: linear-gradient(45deg, var(--accent-green), var(--accent-blue));">A</div>
+                    <div class="team-name">Aaiza Faisal</div>
+                    <div class="team-role">UI/UX Designer</div>
+                </div>
             </div>
         </div>
     </section>
