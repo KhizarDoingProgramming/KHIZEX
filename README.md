@@ -172,7 +172,6 @@ Current settings have these hardcoded - change before going live fr fr.
 | `/marketplace` | Marketplace | Shop integration |
 | `/file-manager` | Files | File uploads |
 | `/admin` | Admin | Django admin |
-
 ---
 
 ## Screenshots (Coming Soon) 📸
@@ -185,6 +184,17 @@ The landing page features:
 
 ---
 
+## Contributing 🤝
+
+Wanna contribute? Hell yeah!
+
+1. Fork it
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push (`git push origin feature/amazing-feature`)
+5. Open a PR
+
+---
 
 ## License
 
@@ -192,4 +202,4 @@ MIT License - do what you want, just don't sue me.
 
 ---
 
-Made with 💜 by MUSTAFA | [GitHub](https://github.com/KhizarDoingProgramming) |
+Made with 💜 by MUSTAFA | [GitHub](https://github.com/KhizarDoingProgramming) | [Discord](https://discord.gg/khizarwantsmangoes)
