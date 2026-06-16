@@ -19,6 +19,8 @@ class Profile(models.Model):
         ('developer', 'Developer'),
         ('designer', 'Designer'),
         ('manager', 'Manager'),
+        ('founder', 'Founder & Lead Developer'),
+        ('contributor', 'Contributor'),
     ]
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='developer')
     
