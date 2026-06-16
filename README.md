@@ -108,18 +108,36 @@ KHIZEX/
 
 ## Deployment (For the Big Leagues) 🌐
 
-### Render
+### Render + Supabase
 
-1. Create a Web Service
-2. Build command: `pip install django pillow gunicorn`
+**Option A: SQLite (quick deploy)**
+1. Create a Web Service on Render
+2. Build command: `pip install -r requirements.txt`
 3. Start command: `gunicorn khizex.wsgi:application`
-4. Run before first deploy:
+4. Environment variables:
    ```bash
-   python manage.py migrate
-   python manage.py collectstatic --noinput
+   SECRET_KEY=your-secret-key-here
+   DEBUG=False
+   ALLOWED_HOSTS=your-app.onrender.com
+   ```
+5. Attach persistent storage for `db.sqlite3` and `media/`
+
+**Option B: Supabase PostgreSQL (recommended)**
+1. Create Supabase project at https://supabase.com
+2. Get your connection string (Settings → Database → Connection string)
+3. Add to Render environment:
+   ```bash
+   DATABASE_URL=postgresql://postgres:password@db.supabase.co:5432/postgres
+   SECRET_KEY=your-secret-key-here
+   DEBUG=False
+   ALLOWED_HOSTS=your-app.onrender.com
    ```
 
-**Important:** Attach persistent storage for `db.sqlite3` and `media/` or you'll lose data on redeploys.
+**Post-deploy commands:**
+```bash
+python manage.py migrate
+python manage.py collectstatic --noinput
+```
 
 ---
 
