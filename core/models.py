@@ -14,6 +14,13 @@ class Profile(models.Model):
     bio = models.TextField(blank=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     badges = models.ManyToManyField(Badge, blank=True, related_name='profiles')
+    ROLE_CHOICES = [
+        ('admin', 'Admin'),
+        ('developer', 'Developer'),
+        ('designer', 'Designer'),
+        ('manager', 'Manager'),
+    ]
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='developer')
     
     def __str__(self):
         return self.user.username
